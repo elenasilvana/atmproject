@@ -5,10 +5,12 @@ let operationsTag = document.getElementsByClassName('operations')[0];
 //el valor de la division
 let div = 0;
 //la cantidad de billetes
-let papeles = 0;
+//let papeles = 0;
+let bills = 0;
+//
 
 const images = [];
-let cashAvailable; // showAtmMoney result
+//let cashAvailable; // showAtmMoney result
 
 images['100mxn'] = '100mxn.jpg';
 images['50mxn'] = '50mxn.jpg';
@@ -17,55 +19,60 @@ images['20mxn'] = '20mxn.jpg';
 //class money
 const inputMoney = document.getElementsByClassName('money')[0];
 
-let showCash = document.getElementsByClassName('respuesta')[0];
+let showCash = document.getElementsByClassName('answer')[0];
 
 // el dinero que el cliente quiere retirar
 //let dinero = inputMoney.value;
 let moneyrequest = inputMoney.value;
 
 //el dinero con el que cuenta el atm
-const caja = [];
+//const caja = [];
 const atm = [];
-const entregado = [];
+const extractedMoney = [];
+//const entregado = [];
 
-class Billete {
-    constructor(valor, cantidad)
+class Bill {
+    constructor( value, quantity )
     {
-        this.valor = valor;
-        this.cantidad= cantidad;
+        this.value = value;
+        this.quantity = quantity ;
         this.image = new Image(200, 100);  
-        this.image.src = images[`${this.valor}mxn`]; 
+        this.image.src = images[`${this.value}mxn`]; 
     }
     showImage(){
         document.body.appendChild(this.image);
         //console.log(this.image);
     }
+    //TODO
     //descubrir cómo borrar, quitar la imagen que muestro
-     
+    //node.removeChild() ??? 
+     eraseImage(){
 
-    restar(valor, sustraer){
-        this.valor = valor;
-        this.cantidad = this.cantidad - sustraer;
+     }
+
+    restar(value, subtract){
+        this.value = value;
+        this.quantity  = this.quantity  - subtract;
     }
 }
 
 //se llena la caja
-atm.push(new Billete(100, 10))
-atm.push(new Billete(50, 20));
-atm.push(new Billete(20, 30));
+atm.push(new Bill(100, 10))
+atm.push(new Bill(50, 20));
+atm.push(new Bill(20, 30));
 
 function showAtmMoney(){
-    let totalDisponible = getTotalMoney(atm);
-    atmMoney.innerHTML = `El efectivo disponible es ${totalDisponible}`;
+    let totalAvailable = getTotalMoney(atm);
+    atmMoney.innerHTML = `El efectivo disponible es ${totalAvailable}`;
 }
 
 
 function getTotalMoney(arr){
-    let totalDisponible = 0;
+    let totalAvailable = 0;
     arr.forEach((billete)=>{
-        totalDisponible += billete.valor * billete.cantidad;
+        totalAvailable += billete.value * billete.quantity;
     });
-    return totalDisponible;
+    return totalAvailable;
 }
 
 function entregarDinero(){
@@ -74,35 +81,35 @@ function entregarDinero(){
 
     for(let bi of atm){
         if  (moneyrequest > 0) {
-            //rendondear hacia abajo y dividir entre el valor
-            div = Math.floor(   moneyrequest / bi.valor);
-            if(div > bi.cantidad){
-                papeles = bi.cantidad
+            //rendondear hacia abajo y dividir entre el value
+            div = Math.floor(   moneyrequest / bi.value);
+            if( div > bi.quantity  ){
+                bills = bi.quantity
             }
             else{
-                papeles = div;
+                bills = div;
             }
-            entregado.push( new Billete(bi.valor, papeles));
-            //console.log(bi.valor, papeles);
-            //comparar entregados con atm, y restar los billetes entregados.
+            extractedMoney.push( new Bill(bi.value, bills));
+            //console.log(bi.value, bills);
+            //comparar extractedMoneys con atm, y restar los billetes extractedMoneys.
            atm.forEach((billete)=>{
-               if(billete.valor === bi.valor){
-                   billete.restar(billete.valor, papeles);
-                   console.log(billete.cantidad);
+               if(billete.value === bi.value){
+                   billete.restar(billete.value, bills);
+                   console.log(billete.quantity);
                 }
             })
-            moneyrequest =  moneyrequest - (bi.valor * papeles);
+            moneyrequest =  moneyrequest - (bi.value * bills);
         }
     }
     if  (moneyrequest > 0){
         showCash.innerHTML = ('atm out of money');
     }
     else{
-        for(let e of entregado)
+        for(let e of extractedMoney)
         {
-            if(e.cantidad > 0){
+            if(e.quantity > 0){
                 e.showImage();
-                showCash.innerHTML = showCash.innerHTML + (`\n${e.cantidad} billetes de $${e.valor} \n`);
+                showCash.innerHTML = showCash.innerHTML + (`\n${e.quantity} billetes de $${e.value} \n`);
             }
         }
         showCash.innerHTML =  showCash.innerHTML + '\nfavor de tomar el dinero';
