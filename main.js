@@ -6,6 +6,7 @@ let operationsTag = document.getElementsByClassName('operations')[0];
 let div = 0;
 //la cantidad de billetes
 let papeles = 0;
+
 const images = [];
 let cashAvailable; // showAtmMoney result
 
@@ -19,10 +20,12 @@ const inputMoney = document.getElementsByClassName('money')[0];
 let showCash = document.getElementsByClassName('respuesta')[0];
 
 // el dinero que el cliente quiere retirar
-let dinero = inputMoney.value;
+//let dinero = inputMoney.value;
+let moneyrequest = inputMoney.value;
 
 //el dinero con el que cuenta el atm
 const caja = [];
+const atm = [];
 const entregado = [];
 
 class Billete {
@@ -47,12 +50,12 @@ class Billete {
 }
 
 //se llena la caja
-caja.push(new Billete(100, 10))
-caja.push(new Billete(50, 20));
-caja.push(new Billete(20, 30));
+atm.push(new Billete(100, 10))
+atm.push(new Billete(50, 20));
+atm.push(new Billete(20, 30));
 
 function showAtmMoney(){
-    let totalDisponible = getTotalMoney(caja);
+    let totalDisponible = getTotalMoney(atm);
     atmMoney.innerHTML = `El efectivo disponible es ${totalDisponible}`;
 }
 
@@ -66,13 +69,13 @@ function getTotalMoney(arr){
 }
 
 function entregarDinero(){
-    dinero = Number(inputMoney.value);
+    moneyrequest = Number(inputMoney.value);
     showCash.innerHTML = "";
 
-    for(let bi of caja){
-        if(dinero > 0) {
+    for(let bi of atm){
+        if  (moneyrequest > 0) {
             //rendondear hacia abajo y dividir entre el valor
-            div = Math.floor( dinero / bi.valor);
+            div = Math.floor(   moneyrequest / bi.valor);
             if(div > bi.cantidad){
                 papeles = bi.cantidad
             }
@@ -81,17 +84,17 @@ function entregarDinero(){
             }
             entregado.push( new Billete(bi.valor, papeles));
             //console.log(bi.valor, papeles);
-            //comparar entregados con caja, y restar los billetes entregados.
-           caja.forEach((billete)=>{
+            //comparar entregados con atm, y restar los billetes entregados.
+           atm.forEach((billete)=>{
                if(billete.valor === bi.valor){
                    billete.restar(billete.valor, papeles);
                    console.log(billete.cantidad);
                 }
             })
-            dinero = dinero - (bi.valor * papeles);
+            moneyrequest =  moneyrequest - (bi.valor * papeles);
         }
     }
-    if(dinero > 0){
+    if  (moneyrequest > 0){
         showCash.innerHTML = ('atm out of money');
     }
     else{
@@ -107,7 +110,8 @@ function entregarDinero(){
     showAtmMoney();
 }
 
-const extractButton = document.getElementById('extraer');
+//const extractButton = document.getElementById('extraer');
+const extractButton = document.getElementsByClassName('getAmount')[0];
 extractButton.addEventListener('click', entregarDinero);
 
 //TODO 
